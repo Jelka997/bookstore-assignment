@@ -3,6 +3,7 @@ using System;
 using BookstoreApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BookstoreApplication.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260105184204_v1")]
+    partial class v1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,8 +38,7 @@ namespace BookstoreApplication.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("Birthday");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -70,7 +72,7 @@ namespace BookstoreApplication.Migrations
 
                     b.HasIndex("AwardId");
 
-                    b.ToTable("AuthorAwardBridge", (string)null);
+                    b.ToTable("AuthorAwards");
                 });
 
             modelBuilder.Entity("BookstoreApplication.Models.Award", b =>
@@ -94,7 +96,7 @@ namespace BookstoreApplication.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Awards");
+                    b.ToTable("Award");
                 });
 
             modelBuilder.Entity("BookstoreApplication.Models.Book", b =>
@@ -162,13 +164,13 @@ namespace BookstoreApplication.Migrations
             modelBuilder.Entity("BookstoreApplication.Models.AuthorAward", b =>
                 {
                     b.HasOne("BookstoreApplication.Models.Author", "Author")
-                        .WithMany("AuthorAwards")
+                        .WithMany("Awards")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BookstoreApplication.Models.Award", "Award")
-                        .WithMany("AuthorAwards")
+                        .WithMany()
                         .HasForeignKey("AwardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -187,9 +189,9 @@ namespace BookstoreApplication.Migrations
                         .IsRequired();
 
                     b.HasOne("BookstoreApplication.Models.Publisher", "Publisher")
-                        .WithMany("Books")
+                        .WithMany()
                         .HasForeignKey("PublisherId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Author");
@@ -199,17 +201,7 @@ namespace BookstoreApplication.Migrations
 
             modelBuilder.Entity("BookstoreApplication.Models.Author", b =>
                 {
-                    b.Navigation("AuthorAwards");
-                });
-
-            modelBuilder.Entity("BookstoreApplication.Models.Award", b =>
-                {
-                    b.Navigation("AuthorAwards");
-                });
-
-            modelBuilder.Entity("BookstoreApplication.Models.Publisher", b =>
-                {
-                    b.Navigation("Books");
+                    b.Navigation("Awards");
                 });
 #pragma warning restore 612, 618
         }
