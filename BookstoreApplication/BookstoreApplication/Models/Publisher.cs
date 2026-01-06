@@ -1,4 +1,6 @@
-﻿namespace BookstoreApplication.Models
+﻿using System.Text.Json.Serialization;
+
+namespace BookstoreApplication.Models
 {
     public class Publisher
     {
@@ -6,6 +8,7 @@
         public required string Name { get; set; }
         public required string Address { get; set; }
         public required string Website { get; set; }
-        public List<Book> Books { get; set; }
+        [JsonIgnore]
+        public List<Book> Books { get; set; } = new List<Book>();
     }
 }
