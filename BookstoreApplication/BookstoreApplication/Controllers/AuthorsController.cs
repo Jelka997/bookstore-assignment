@@ -20,17 +20,17 @@ namespace BookstoreApplication.Controllers
 
         // GET: api/authors
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAllAsync()
         {
-            List<Author> authors = authorRepository.GetAll();
+            List<Author> authors = await authorRepository.GetAllAsync();
             return Ok(authors);
         }
 
         // GET api/authors/5
         [HttpGet("{id}")]
-        public IActionResult GetOne(int id)
+        public async Task<IActionResult> GetOneAsync(int id)
         {
-            var author = authorRepository.GetById(id);
+            var author = await authorRepository.GetByIdAsync(id);
             if (author == null)
             {
                 return NotFound();
@@ -40,28 +40,29 @@ namespace BookstoreApplication.Controllers
 
         // POST api/authors
         [HttpPost]
-        public IActionResult Post(Author author)
+        public async Task<IActionResult> PostAsync(Author author)
         {
-            return Ok(authorRepository.Add(author));
+            return Ok(await authorRepository.AddAsync(author));
         }
 
         // PUT api/authors/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Author author)
+        public async Task<IActionResult> PutAsync(int id, Author author)
         {
             if (author.Id != id)
             {
                 return BadRequest();
             }
 
-            return Ok(authorRepository.Update(author));
+            return Ok(await authorRepository.UpdateAsync(author));
         }
 
         // DELETE api/authors/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            if (!authorRepository.Delete(id))
+            var result = await authorRepository.DeleteAsync(id);
+            if (!result)
                 return NotFound();
 
             return NoContent();
