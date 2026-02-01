@@ -1,5 +1,4 @@
 ﻿using BookstoreApplication.Models;
-using BookstoreApplication.Repositorys;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Services

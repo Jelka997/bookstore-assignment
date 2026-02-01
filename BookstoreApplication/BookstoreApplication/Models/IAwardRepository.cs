@@ -1,6 +1,4 @@
-﻿using BookstoreApplication.Models;
-
-namespace BookstoreApplication.Repositorys
+﻿namespace BookstoreApplication.Models
 {
     public interface IAwardRepository
     {
