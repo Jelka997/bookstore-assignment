@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Services
 {
-    public class AwardService
+    public class AwardService : IAwardService
     {
-        private readonly AwardRepository _awardRepository;
-        public AwardService(AwardRepository awardRepository)
+        private readonly IAwardRepository _awardRepository;
+        public AwardService(IAwardRepository awardRepository)
         {
             _awardRepository = awardRepository;
         }
@@ -20,7 +20,7 @@ namespace BookstoreApplication.Services
 
         public async Task<Award> UpdateAsync(Award award)
         {
-           Award newAward = await _awardRepository.UpdateAsync(award);
+            Award newAward = await _awardRepository.UpdateAsync(award);
             return newAward;
         }
 

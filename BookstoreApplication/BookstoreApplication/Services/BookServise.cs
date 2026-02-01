@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Services
 {
-    public class BookServise
+    public class BookServise : IBookServise
     {
-        private readonly BookRepository _bookRepository;
+        private readonly IBookRepository _bookRepository;
 
-        public BookServise(BookRepository bookRepository)
+        public BookServise(IBookRepository bookRepository)
         {
             _bookRepository = bookRepository;
         }
@@ -22,7 +22,7 @@ namespace BookstoreApplication.Services
 
         public async Task<Book> UpdateAsync(Book book)
         {
-           Book newBook = await _bookRepository.UpdateAsync(book);
+            Book newBook = await _bookRepository.UpdateAsync(book);
             return newBook;
         }
 

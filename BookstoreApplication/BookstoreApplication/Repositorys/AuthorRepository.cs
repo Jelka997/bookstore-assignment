@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Repositorys
 {
-    public class AuthorRepository
+    public class AuthorRepository : IAuthorRepository
     {
         private AppDbContext _context;
 
@@ -28,7 +28,7 @@ namespace BookstoreApplication.Repositorys
 
         public async Task<bool> DeleteAsync(int id)
         {
-            Author author =await _context.Author.FindAsync(id);
+            Author author = await _context.Author.FindAsync(id);
             if (author == null)
             {
                 return false;

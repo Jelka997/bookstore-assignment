@@ -4,24 +4,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Services
 {
-    public class PublisherService
+    public class PublisherService : IPublisherService
     {
-        private readonly PublisherRepository _publisherRepository;
+        private readonly IPublisherRepository _publisherRepository;
 
-        public PublisherService(PublisherRepository publisherRepository)
+        public PublisherService(IPublisherRepository publisherRepository)
         {
             _publisherRepository = publisherRepository;
         }
 
         public async Task<Publisher> AddAsync(Publisher publisher)
         {
-           Publisher newPublisher = await _publisherRepository.AddAsync(publisher);
+            Publisher newPublisher = await _publisherRepository.AddAsync(publisher);
             return newPublisher;
         }
 
         public async Task<Publisher> UpdateAsync(Publisher publisher)
         {
-           Publisher newPublisher =await  _publisherRepository.UpdateAsync(publisher);
+            Publisher newPublisher = await _publisherRepository.UpdateAsync(publisher);
             return publisher;
         }
 

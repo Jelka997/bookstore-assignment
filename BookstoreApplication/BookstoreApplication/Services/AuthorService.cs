@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Services
 {
-    public class AuthorService
+    public class AuthorService : IAuthorService
     {
-        private readonly AuthorRepository _authorRepository;
-        public AuthorService(AuthorRepository authorRepository)
+        private readonly IAuthorRepository _authorRepository;
+        public AuthorService(IAuthorRepository authorRepository)
         {
             _authorRepository = authorRepository;
         }
