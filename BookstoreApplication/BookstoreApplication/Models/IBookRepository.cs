@@ -1,4 +1,6 @@
-﻿namespace BookstoreApplication.Models
+﻿using BookstoreApplication.DTOs;
+
+namespace BookstoreApplication.Models
 {
     public interface IBookRepository
     {

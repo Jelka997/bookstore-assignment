@@ -1,9 +1,14 @@
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositorys;
 using BookstoreApplication.Services;
+using BookstoreApplication.Settings;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAutoMapper(cfg => {
+    cfg.AddProfile<MappingProfile>();
+});
 
 // Add services to the container.
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();

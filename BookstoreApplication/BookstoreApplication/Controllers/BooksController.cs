@@ -1,4 +1,5 @@
 ﻿using BookstoreApplication.Data;
+using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositorys;
 using BookstoreApplication.Services;
@@ -28,7 +29,7 @@ namespace BookstoreApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            List<Book> books = await _bookServise.GetAllAsync();
+            List<BookDto> books = await _bookServise.GetAllAsync();
             return Ok(books);
         }
 
@@ -77,7 +78,7 @@ namespace BookstoreApplication.Controllers
                 return BadRequest();
             }
 
-            var existingBook = await _bookServise.GetByIdAsync(id);
+            BookDetailsDto existingBook = await _bookServise.GetByIdAsync(id);
             if (existingBook == null)
             {
                 return NotFound();
@@ -96,12 +97,22 @@ namespace BookstoreApplication.Controllers
             {
                 return BadRequest();
             }
+            Book book1 = new Book
+            {
+                Id = existingBook.Id,
+                Title = existingBook.Title,
+                PageCount = existingBook.PageCount,
+                PublishedDate = existingBook.PublishedDate,
+                ISBN = existingBook.ISBN,
+                AuthorId = existingBook.AuthorId,
+                PublisherId = existingBook.PublisherId
+            };
 
-            existingBook.Title = book.Title;
-            existingBook.PageCount = book.PageCount;
-            existingBook.PublishedDate = book.PublishedDate;
-            existingBook.ISBN = book.ISBN;
-            var updatedBook = await _bookServise.UpdateAsync(existingBook);
+            book1.Title = book.Title;
+            book1.PageCount = book.PageCount;
+            book1.PublishedDate = book.PublishedDate;
+            book1.ISBN = book.ISBN;
+            var updatedBook = await _bookServise.UpdateAsync(book1);
             return Ok(updatedBook);
         }
 

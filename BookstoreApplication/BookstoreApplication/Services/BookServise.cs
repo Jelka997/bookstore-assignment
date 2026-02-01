@@ -1,4 +1,6 @@
-﻿using BookstoreApplication.Models;
+﻿using AutoMapper;
+using BookstoreApplication.DTOs;
+using BookstoreApplication.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Services
@@ -6,10 +8,12 @@ namespace BookstoreApplication.Services
     public class BookServise : IBookServise
     {
         private readonly IBookRepository _bookRepository;
+        private readonly IMapper _mapper;
 
-        public BookServise(IBookRepository bookRepository)
+        public BookServise(IBookRepository bookRepository, IMapper mapper)
         {
             _bookRepository = bookRepository;
+            _mapper = mapper;
         }
 
 
@@ -35,14 +39,19 @@ namespace BookstoreApplication.Services
             return await _bookRepository.DeleteAsync(id);
         }
 
-        public async Task<List<Book>> GetAllAsync()
+        public async Task<List<BookDto>> GetAllAsync()
         {
-            return await _bookRepository.GetAllAsync();
+            var books = await _bookRepository.GetAllAsync();
+            return books
+                .Select(_mapper.Map<BookDto>)
+                .ToList();
         }
 
-        public async Task<Book?> GetByIdAsync(int id)
+        public async Task<BookDetailsDto?> GetByIdAsync(int id)
         {
-            return await _bookRepository.GetByIdAsync(id);
+            var book = await _bookRepository.GetByIdAsync(id);
+            if (book == null) return null;
+            return _mapper.Map<BookDetailsDto>(book);
         }
     }
 }
