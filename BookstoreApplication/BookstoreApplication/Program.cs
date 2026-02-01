@@ -1,10 +1,15 @@
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositorys;
+using BookstoreApplication.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<AuthorService>();
+builder.Services.AddScoped<AwardService>();
+builder.Services.AddScoped<BookServise>();
+builder.Services.AddScoped<PublisherService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 

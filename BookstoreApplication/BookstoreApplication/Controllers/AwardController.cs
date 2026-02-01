@@ -1,5 +1,6 @@
 ﻿using BookstoreApplication.Models;
 using BookstoreApplication.Repositorys;
+using BookstoreApplication.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,18 +10,18 @@ namespace BookstoreApplication.Controllers
     [ApiController]
     public class AwardController : ControllerBase
     {
-        private readonly AwardRepository awardRepository;
+        private readonly AwardService _awardService;
 
-        public AwardController(AwardRepository awardRepository)
+        public AwardController(AwardService awardService)
         {
-            this.awardRepository = awardRepository;
+            _awardService = awardService;
         }
 
         // GET: api/awards
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            List<Award> awards = await awardRepository.GetAllAsync();
+            List<Award> awards = await _awardService.GetAllAsync();
             return Ok(awards);
         }
 
@@ -28,7 +29,7 @@ namespace BookstoreApplication.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOneAsync(int id)
         {
-            var award = await awardRepository.GetByIdAsync(id);
+            var award = await _awardService.GetByIdAsync(id);
             if (award == null)
             {
                 return NotFound();
@@ -40,7 +41,7 @@ namespace BookstoreApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync(Award award)
         {
-            return Ok(await awardRepository.AddAsync(award));
+            return Ok(await _awardService.AddAsync(award));
         }
 
         // PUT api/award/5
@@ -52,7 +53,7 @@ namespace BookstoreApplication.Controllers
                 return BadRequest();
             }
 
-            var existingAward = await awardRepository.GetByIdAsync(id);
+            var existingAward = await _awardService.GetByIdAsync(id);
             if (existingAward == null)
             {
                 return NotFound();
@@ -61,7 +62,7 @@ namespace BookstoreApplication.Controllers
             existingAward.Name = award.Name;
             existingAward.Year = award.Year;
             existingAward.Description = award.Description;
-            var updatedAward = await awardRepository.UpdateAsync(existingAward);
+            var updatedAward = await _awardService.UpdateAsync(existingAward);
             return Ok(updatedAward);
         }
 
@@ -69,12 +70,12 @@ namespace BookstoreApplication.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var award = await awardRepository.GetByIdAsync(id);
+            var award = await _awardService.GetByIdAsync(id);
             if (award == null)
             {
                 return NotFound();
             }
-            await awardRepository.DeleteAsync(id);
+            await _awardService.DeleteAsync(id);
 
             return NoContent();
         }
