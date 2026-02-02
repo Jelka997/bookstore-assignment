@@ -8,6 +8,6 @@ namespace BookstoreApplication.Services
         Task<bool> DeleteAsync(int id);
         Task<List<Award>> GetAllAsync();
         Task<Award?> GetByIdAsync(int id);
-        Task<Award> UpdateAsync(Award award);
+        Task<Award> UpdateAsync(int id, Award award);
     }
 }

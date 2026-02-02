@@ -1,4 +1,5 @@
-﻿using BookstoreApplication.Models;
+﻿using BookstoreApplication.Exceptions;
+using BookstoreApplication.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Services
@@ -14,24 +15,32 @@ namespace BookstoreApplication.Services
 
         public async Task<Publisher> AddAsync(Publisher publisher)
         {
-            Publisher newPublisher = await _publisherRepository.AddAsync(publisher);
-            return newPublisher;
+            if(publisher == null)
+            {
+                throw new BadRequestException("Invalid data.");
+            }
+
+            return await _publisherRepository.AddAsync(publisher);
         }
 
-        public async Task<Publisher> UpdateAsync(Publisher publisher)
+        public async Task<Publisher> UpdateAsync(int id, Publisher publisher)
         {
+            if (publisher.Id != id)
+            {
+                throw new BadRequestException("Identifier value is invalid.");
+            }
+            
             Publisher newPublisher = await _publisherRepository.UpdateAsync(publisher);
             return publisher;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            Publisher publisher = await _publisherRepository.GetByIdAsync(id);
+            var publisher = await _publisherRepository.GetByIdAsync(id);
             if (publisher == null)
             {
-                return false;
+                throw new NotFoundException(id);
             }
-
             return await _publisherRepository.DeleteAsync(id);
         }
 
@@ -42,7 +51,12 @@ namespace BookstoreApplication.Services
 
         public async Task<Publisher?> GetByIdAsync(int id)
         {
-            return await _publisherRepository.GetByIdAsync(id);
+            var publisher = await _publisherRepository.GetByIdAsync(id);
+            if (publisher == null)
+            {
+                throw new NotFoundException(id);
+            }
+            return publisher;
         }
     }
 }

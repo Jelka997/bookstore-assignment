@@ -1,4 +1,5 @@
-﻿using BookstoreApplication.Models;
+﻿using BookstoreApplication.Exceptions;
+using BookstoreApplication.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Services
@@ -13,12 +14,19 @@ namespace BookstoreApplication.Services
 
         public async Task<Award> AddAsync(Award award)
         {
-            Award newAward = await _awardRepository.AddAsync(award);
-            return newAward;
+            if(award == null)
+            {
+                throw new BadRequestException("Invalid data.");
+            }
+            return await _awardRepository.AddAsync(award);
         }
 
-        public async Task<Award> UpdateAsync(Award award)
+        public async Task<Award> UpdateAsync(int id, Award award)
         {
+            if (id != award.Id)
+            {
+                throw new BadRequestException("Identifier value is invalid.");
+            }
             Award newAward = await _awardRepository.UpdateAsync(award);
             return newAward;
         }
@@ -28,7 +36,7 @@ namespace BookstoreApplication.Services
             Award award = await _awardRepository.GetByIdAsync(id);
             if (award == null)
             {
-                return false;
+                throw new NotFoundException(id);
             }
             return await _awardRepository.DeleteAsync(id);
         }
@@ -40,7 +48,12 @@ namespace BookstoreApplication.Services
 
         public async Task<Award?> GetByIdAsync(int id)
         {
-            return await _awardRepository.GetByIdAsync(id);
+            Award award = await _awardRepository.GetByIdAsync(id);
+            if (award == null)
+            {
+                throw new NotFoundException(id);
+            }
+            return award;
         }
     }
 }

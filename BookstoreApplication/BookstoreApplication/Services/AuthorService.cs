@@ -1,4 +1,6 @@
 ﻿using BookstoreApplication.Models;
+using BookstoreApplication.Exceptions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Services
@@ -13,12 +15,19 @@ namespace BookstoreApplication.Services
 
         public async Task<Author> AddAsync(Author author)
         {
-            Author newAuthor = await _authorRepository.AddAsync(author);
-            return newAuthor;
+            if(author == null)
+            {
+                throw new BadRequestException("Invalid data.");
+            }
+            return await _authorRepository.AddAsync(author);
         }
 
-        public async Task<Author> UpdateAsync(Author author)
+        public async Task<Author> UpdateAsync(int id, Author author)
         {
+            if (author.Id != id)
+            {
+                throw new BadRequestException("Identifier value is invalid.");
+            }
             Author newAuthor = await _authorRepository.UpdateAsync(author);
             return newAuthor;
         }
@@ -28,7 +37,7 @@ namespace BookstoreApplication.Services
             Author author = await _authorRepository.GetByIdAsync(id);
             if (author == null)
             {
-                return false;
+                throw new NotFoundException(id);
             }
 
             return await _authorRepository.DeleteAsync(id);
@@ -42,6 +51,11 @@ namespace BookstoreApplication.Services
         public async Task<Author?> GetByIdAsync(int id)
         {
             Author author = await _authorRepository.GetByIdAsync(id);
+
+            if (author == null)
+            {
+                throw new NotFoundException(id);
+            }
             return author;
         }
     }

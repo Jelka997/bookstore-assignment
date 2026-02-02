@@ -32,10 +32,6 @@ namespace BookstoreApplication.Controllers
         public async Task<IActionResult> GetOneAsync(int id)
         {
             var publisher = await _publisherService.GetByIdAsync(id);
-            if (publisher == null)
-            {
-                return NotFound();
-            }
             return Ok(publisher);
         }
 
@@ -50,35 +46,19 @@ namespace BookstoreApplication.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsync(int id, Publisher publisher)
         {
-            if (id != publisher.Id)
-            {
-                return BadRequest();
-            }
-
             var existingPublisher = await _publisherService.GetByIdAsync(id);
-            if (existingPublisher == null)
-            {
-                return NotFound();
-            }
-
             existingPublisher.Name = publisher.Name;
             existingPublisher.Address = publisher.Address;
             existingPublisher.Website = publisher.Website;
-            var updatedPublisher = await _publisherService.UpdateAsync(existingPublisher);
+            var updatedPublisher = await _publisherService.UpdateAsync(id, existingPublisher);
             return Ok(updatedPublisher);
         }
 
         // DELETE api/publishers/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
-        {
-            var publisher =await _publisherService.GetByIdAsync(id);
-            if (publisher == null)
-            {
-                return NotFound();
-            }
+        {  
             await _publisherService.DeleteAsync(id);
-
             return NoContent();
         }
     }

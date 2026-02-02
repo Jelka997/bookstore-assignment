@@ -30,10 +30,6 @@ namespace BookstoreApplication.Controllers
         public async Task<IActionResult> GetOneAsync(int id)
         {
             var award = await _awardService.GetByIdAsync(id);
-            if (award == null)
-            {
-                return NotFound();
-            }
             return Ok(award);
         }
 
@@ -48,21 +44,7 @@ namespace BookstoreApplication.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsync(int id, Award award)
         {
-            if (id != award.Id)
-            {
-                return BadRequest();
-            }
-
-            var existingAward = await _awardService.GetByIdAsync(id);
-            if (existingAward == null)
-            {
-                return NotFound();
-            }
-
-            existingAward.Name = award.Name;
-            existingAward.Year = award.Year;
-            existingAward.Description = award.Description;
-            var updatedAward = await _awardService.UpdateAsync(existingAward);
+            var updatedAward = await _awardService.UpdateAsync( id,award);
             return Ok(updatedAward);
         }
 
@@ -70,13 +52,7 @@ namespace BookstoreApplication.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var award = await _awardService.GetByIdAsync(id);
-            if (award == null)
-            {
-                return NotFound();
-            }
             await _awardService.DeleteAsync(id);
-
             return NoContent();
         }
     }
