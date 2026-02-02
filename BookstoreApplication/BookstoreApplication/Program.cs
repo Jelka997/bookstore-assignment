@@ -3,6 +3,7 @@ using BookstoreApplication.Repositorys;
 using BookstoreApplication.Services;
 using BookstoreApplication.Settings;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +19,7 @@ builder.Services.AddScoped<IAwardRepository, AwardRepository>();
 builder.Services.AddScoped<IAwardService, AwardService>();
 
 builder.Services.AddScoped<IBookRepository, BookRepository>();
-builder.Services.AddScoped<IBookServise, BookServise>();
+builder.Services.AddScoped<IBookServise, BookService>();
 
 builder.Services.AddScoped<IPublisherRepository, PublisherRepository>();
 builder.Services.AddScoped<IPublisherService, PublisherService>();
@@ -43,6 +44,14 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod();
         });
 });
+
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+
 
 var app = builder.Build();
 
