@@ -44,9 +44,9 @@ namespace BookstoreApplication.Services
             return await _publisherRepository.DeleteAsync(id);
         }
 
-        public async Task<List<Publisher>> GetAllAsync()
+        public async Task<List<Publisher>> GetAllAsync(string order, string orderDirection)
         {
-            return await _publisherRepository.GetAllAsync();
+            return await _publisherRepository.GetAllAsync(order, orderDirection);
         }
 
         public async Task<Publisher?> GetByIdAsync(int id)

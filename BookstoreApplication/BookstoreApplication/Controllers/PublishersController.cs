@@ -21,9 +21,9 @@ namespace BookstoreApplication.Controllers
 
         // GET: api/publishers
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync(string order = "Name", string orderDirection = "ASC")
         {
-            List<Publisher> publishers = await _publisherService.GetAllAsync();
+            List<Publisher> publishers = await _publisherService.GetAllAsync(order, orderDirection);
             return Ok(publishers);
         }
 

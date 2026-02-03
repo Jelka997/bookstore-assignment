@@ -39,11 +39,21 @@ namespace BookstoreApplication.Repositorys
             return true;
         }
 
-        public async Task<List<Publisher>> GetAllAsync()
+        public async Task<List<Publisher>> GetAllAsync(string order, string orderDirection)
         {
-            Task<List<Publisher>> publishers = _context.Publisher.ToListAsync();
-            List<Publisher> result = await publishers;
-            return result;
+            IQueryable<Publisher> query = _context.Publisher;
+
+            if (order == "Name")
+            {
+               query = orderDirection == "ASC" ? query.OrderBy(n => n.Name) : query.OrderByDescending(n => n.Name);
+
+            }
+            else if(order == "Address")
+            {
+                query = orderDirection == "ASC" ? query.OrderBy(n => n.Address) : query.OrderByDescending(n => n.Address);
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<Publisher?> GetByIdAsync(int id)
