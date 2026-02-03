@@ -81,10 +81,10 @@ namespace BookstoreApplication.Services
             return result;
         }
 
-        public async Task<List<BookDto>> GetAllAsync()
+        public async Task<List<BookDto>> GetAllAsync(string order, string orderDirection)
         {
             _logger.LogInformation($"Retrieving all books.");
-            var books = await _bookRepository.GetAllAsync();
+            var books = await _bookRepository.GetAllAsync(order, orderDirection);
 
             if (books == null)
             {

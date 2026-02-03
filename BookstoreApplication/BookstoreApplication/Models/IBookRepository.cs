@@ -6,7 +6,7 @@ namespace BookstoreApplication.Models
     {
         Task<Book> AddAsync(Book book);
         Task<bool> DeleteAsync(int id);
-        Task<List<Book>> GetAllAsync();
+        Task<List<Book>> GetAllAsync(string order, string orderDirection);
         Task<Book?> GetByIdAsync(int id);
         Task<Book> UpdateAsync(Book book);
     }

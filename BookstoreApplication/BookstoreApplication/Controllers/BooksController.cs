@@ -27,9 +27,9 @@ namespace BookstoreApplication.Controllers
 
         // GET: api/books
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync(string order = "Name", string orderDirection = "ASC")
         {
-            List<BookDto> books = await _bookServise.GetAllAsync();
+            List<BookDto> books = await _bookServise.GetAllAsync(order, orderDirection);
             return Ok(books);
         }
 

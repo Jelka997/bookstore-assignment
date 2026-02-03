@@ -39,12 +39,26 @@ namespace BookstoreApplication.Repositorys
             return true;
         }
 
-        public async Task<List<Book>> GetAllAsync()
+        public async Task<List<Book>> GetAllAsync(string order, string orderDirection)
         {
-            return await _context.Books
+            IQueryable<Book> query = _context.Books
                 .Include(a => a.Author)
-                .Include(p => p.Publisher)
-                .ToListAsync();
+                .Include(p => p.Publisher);
+
+            if(order == "Name")
+            {
+                query = orderDirection == "ASC" ? query.OrderBy(n => n.Title) : query.OrderByDescending(n => n.Title);
+            }
+            else if(order == "Date")
+            {
+                query = orderDirection == "ASC" ? query.OrderBy(d => d.PublishedDate) : query.OrderByDescending(d => d.PublishedDate);
+            }
+            else if (order == "Author")
+            {
+                query = orderDirection == "ASC" ? query.OrderBy(a => a.Author.FullName) : query.OrderByDescending(a => a.Author.FullName);
+            }
+
+            return await query.ToListAsync();
         }
 
         public async Task<Book?> GetByIdAsync(int id)
