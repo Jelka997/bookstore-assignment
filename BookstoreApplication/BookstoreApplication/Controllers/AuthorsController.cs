@@ -1,4 +1,5 @@
 ﻿using BookstoreApplication.Data;
+using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositorys;
 using BookstoreApplication.Services;
@@ -21,9 +22,9 @@ namespace BookstoreApplication.Controllers
 
         // GET: api/authors
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync(int page, int pageSize)
         {
-            List<Author> authors = await _authorService.GetAllAsync();
+            PaginatedListDto<Author> authors = await _authorService.GetAllAsync(page, pageSize);
             return Ok(authors);
         }
 

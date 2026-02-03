@@ -2,6 +2,7 @@
 using BookstoreApplication.Exceptions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using BookstoreApplication.DTOs;
 
 namespace BookstoreApplication.Services
 {
@@ -43,9 +44,9 @@ namespace BookstoreApplication.Services
             return await _authorRepository.DeleteAsync(id);
         }
 
-        public async Task<List<Author>> GetAllAsync()
+        public async Task<PaginatedListDto<Author>> GetAllAsync(int page, int pageSize)
         {
-            return await _authorRepository.GetAllAsync();
+            return await _authorRepository.GetAllAsync(page, pageSize);
         }
 
         public async Task<Author?> GetByIdAsync(int id)
