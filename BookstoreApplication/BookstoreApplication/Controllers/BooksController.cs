@@ -33,6 +33,15 @@ namespace BookstoreApplication.Controllers
             return Ok(books);
         }
 
+
+        // GET: api/books/search
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchBooks([FromQuery] BookSearchDto bookSearchDto)
+        {
+            List<BookDto> books = await _bookServise.BookSearchAsync(bookSearchDto);
+            return Ok(books);
+        }
+
         // GET api/books/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOneAsync(int id)

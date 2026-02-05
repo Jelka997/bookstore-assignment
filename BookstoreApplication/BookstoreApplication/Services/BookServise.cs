@@ -96,6 +96,18 @@ namespace BookstoreApplication.Services
             return books.Select(_mapper.Map<BookDto>).ToList();
         }
 
+        public async Task<List<BookDto>> GetAllBooksAsync()
+        {
+            var books = await _bookRepository.GetAllBooksAsync();
+
+            if (books == null)
+            {
+                return new List<BookDto>();
+            }
+
+            return books.Select(_mapper.Map<BookDto>).ToList();
+        }
+
         public async Task<BookDetailsDto> GetByIdAsync(int id)
         {
             _logger.LogInformation($"Retrieving book with Id {id}.");
@@ -107,6 +119,30 @@ namespace BookstoreApplication.Services
             }
             _logger.LogInformation($"Book with Id {book.Id} retrieved successfully.");
             return _mapper.Map<BookDetailsDto>(book);
+        }
+
+        public async Task<List<BookDto>> BookSearchAsync(BookSearchDto bookSearchDto)
+        {
+            var books = await _bookRepository.GetAllBooksAsync();
+            bool isEmpty = string.IsNullOrEmpty(bookSearchDto.Title)
+                && bookSearchDto.PublishedTo == null
+                && bookSearchDto.PublishedFrom == null
+                && bookSearchDto.AuthorId == null
+                && string.IsNullOrEmpty(bookSearchDto.AuthorName)
+                && bookSearchDto.AuthorBirthDateFrom == null
+                && bookSearchDto.AuthorBirthDateTo == null;
+
+            if (isEmpty)
+            {
+                return books.Select(_mapper.Map<BookDto>).ToList();
+            }
+
+            var searchBooks = await _bookRepository.BookSearchAsync(bookSearchDto);
+            if (searchBooks.Count == 0)
+            {
+                throw new BadRequestException("Book not found.");
+            }
+            return searchBooks.Select(_mapper.Map<BookDto>).ToList();
         }
     }
 }

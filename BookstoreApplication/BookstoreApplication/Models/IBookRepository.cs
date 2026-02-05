@@ -9,5 +9,7 @@ namespace BookstoreApplication.Models
         Task<List<Book>> GetAllAsync(string order, string orderDirection);
         Task<Book?> GetByIdAsync(int id);
         Task<Book> UpdateAsync(Book book);
+        Task<List<Book>> BookSearchAsync(BookSearchDto bookSearchDto);
+        Task<List<Book>> GetAllBooksAsync();
     }
 }
