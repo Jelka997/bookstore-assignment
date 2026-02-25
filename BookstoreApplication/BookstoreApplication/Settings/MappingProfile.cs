@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
+using BookstoreApplication.Services;
 
 namespace BookstoreApplication.Settings
 {
@@ -16,6 +17,7 @@ namespace BookstoreApplication.Settings
 
             CreateMap<Book, BookDetailsDto>().ReverseMap();
             CreateMap<RegistrationDto, ApplicationUser>();
+            CreateMap<ApplicationUser, ProfileDto>();
         }
     }
 }

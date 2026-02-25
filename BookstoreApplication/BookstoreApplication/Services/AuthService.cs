@@ -3,23 +3,29 @@ using BookstoreApplication.DTOs;
 using BookstoreApplication.Exceptions;
 using BookstoreApplication.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace BookstoreApplication.Services
 {
     public class AuthService : IAuthService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IMapper mapper;
+        private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
-        public AuthService(UserManager<ApplicationUser> userManager, IMapper mapper)
+        public AuthService(UserManager<ApplicationUser> userManager, IMapper mapper, IConfiguration configuration)
         {
             _userManager = userManager;
-            this.mapper = mapper;
+            _mapper = mapper;
+            _configuration = configuration;
         }
 
         public async Task RegisterUserAsync(RegistrationDto registrationDto)
         {
-            var user = mapper.Map<ApplicationUser>(registrationDto);
+            var user = _mapper.Map<ApplicationUser>(registrationDto);
             var result = await _userManager.CreateAsync(user, registrationDto.Password);
             if (!result.Succeeded)
             {
@@ -28,7 +34,7 @@ namespace BookstoreApplication.Services
             }
         }
 
-        public async Task LoginAsync(LoginDto loginDto)
+        public async Task<string> LoginAsync(LoginDto loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.Username);
             if (user == null)
@@ -41,6 +47,50 @@ namespace BookstoreApplication.Services
                 throw new BadRequestException("Invalid username or password.");
             }
 
+            var token = await GenerateJwt(user);
+            return token;
         }
+
+
+        public async Task<string> GenerateJwt(ApplicationUser user)
+        {
+            var claims = new List<Claim>
+             {
+               new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+               new Claim("username", user.UserName),
+               new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+             };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+              issuer: _configuration["Jwt:Issuer"],
+              audience: _configuration["Jwt:Audience"],
+              claims: claims,
+              expires: DateTime.UtcNow.AddDays(1),
+              signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<ProfileDto> GetProfile(ClaimsPrincipal userPrincipal)
+        {
+            var username = userPrincipal.FindFirstValue("username");
+
+            if (username == null)
+            {
+                throw new BadRequestException("Token is invalid");
+            }
+
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                throw new BadRequestException("User with provided username does not exist.");
+            }
+
+            return _mapper.Map<ProfileDto>(user);
+        }
+
     }
 }
