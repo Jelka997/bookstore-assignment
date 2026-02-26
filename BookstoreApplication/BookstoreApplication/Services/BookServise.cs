@@ -120,6 +120,18 @@ namespace BookstoreApplication.Services
             _logger.LogInformation($"Book with Id {book.Id} retrieved successfully.");
             return _mapper.Map<BookDetailsDto>(book);
         }
+        public async Task<Book> GetBookByIdAsync(int id)
+        {
+            _logger.LogInformation($"Retrieving book with Id {id}.");
+            var book = await _bookRepository.GetByIdAsync(id);
+            if (book == null)
+            {
+                _logger.LogError($"Book with Id {id} does not exist.");
+                throw new NotFoundException(id);
+            }
+            _logger.LogInformation($"Book with Id {book.Id} retrieved successfully.");
+            return book;
+        }
 
         public async Task<List<BookDto>> BookSearchAsync(BookSearchDto bookSearchDto)
         {

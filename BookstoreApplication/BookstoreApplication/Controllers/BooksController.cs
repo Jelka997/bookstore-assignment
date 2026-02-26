@@ -3,6 +3,7 @@ using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositorys;
 using BookstoreApplication.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -26,6 +27,7 @@ namespace BookstoreApplication.Controllers
 
 
         // GET: api/books
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAllAsync(string order = "Name", string orderDirection = "ASC")
         {
@@ -35,6 +37,7 @@ namespace BookstoreApplication.Controllers
 
 
         // GET: api/books/search
+        [AllowAnonymous]
         [HttpGet("search")]
         public async Task<IActionResult> SearchBooks([FromQuery] BookSearchDto bookSearchDto)
         {
@@ -51,6 +54,7 @@ namespace BookstoreApplication.Controllers
         }
 
         // POST api/books
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> PostAsync(Book book)
         {
@@ -65,37 +69,28 @@ namespace BookstoreApplication.Controllers
         }
 
         // PUT api/books/5
+        [Authorize(Policy = "UpdateBook")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsync(int id, Book book)
         {
-            BookDetailsDto existingBook = await _bookServise.GetByIdAsync(id);
-           
-            // izmena knjige je moguca ako je izabran postojeći autor
-            var author = await _authorService.GetByIdAsync(book.AuthorId);
-           
-            // izmena knjige je moguca ako je izabran postojeći izdavač
-            var publisher = await _publisherService.GetByIdAsync(book.PublisherId);
-            
-            Book book1 = new Book
-            {
-                Id = existingBook.Id,
-                Title = existingBook.Title,
-                PageCount = existingBook.PageCount,
-                PublishedDate = existingBook.PublishedDate,
-                ISBN = existingBook.ISBN,
-                AuthorId = existingBook.AuthorId,
-                PublisherId = existingBook.PublisherId
-            };
+            var existingBook = await _bookServise.GetBookByIdAsync(id); 
 
-            book1.Title = book.Title;
-            book1.PageCount = book.PageCount;
-            book1.PublishedDate = book.PublishedDate;
-            book1.ISBN = book.ISBN;
-            var updatedBook = await _bookServise.UpdateAsync(id,book1);
+            if (existingBook == null)
+                return NotFound();
+
+            existingBook.Title = book.Title;
+            existingBook.PageCount = book.PageCount;
+            existingBook.PublishedDate = book.PublishedDate;
+            existingBook.ISBN = book.ISBN;
+            existingBook.AuthorId = book.AuthorId;
+            existingBook.PublisherId = book.PublisherId;
+
+            var updatedBook = await _bookServise.UpdateAsync(id,existingBook);
             return Ok(updatedBook);
         }
 
         // DELETE api/books/5
+        [Authorize(Policy = "DeleteBook")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {

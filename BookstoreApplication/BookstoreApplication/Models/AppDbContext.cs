@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using BookstoreApplication.Migrations;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 
@@ -17,6 +19,12 @@ namespace BookstoreApplication.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<IdentityRole>()
+                .HasData(
+                    new IdentityRole { Id = "1", Name = "Librarian", NormalizedName = "LIBRARIAN" },
+                    new IdentityRole { Id = "2", Name = "Editor", NormalizedName = "EDITOR" }
+                );
 
             modelBuilder.Entity<AuthorAward>(entity =>
             {

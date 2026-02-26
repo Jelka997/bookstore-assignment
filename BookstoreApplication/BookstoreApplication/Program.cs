@@ -1,3 +1,4 @@
+using BookstoreApplication;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositorys;
 using BookstoreApplication.Services;
@@ -79,7 +80,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
 });
 builder.Services.AddAuthentication(options =>
-{ 
+{
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
@@ -100,6 +101,13 @@ builder.Services.AddAuthentication(options =>
         RoleClaimType = ClaimTypes.Role
     };
 });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("DeleteBook", policy => policy.RequireRole("Editor"));
+    options.AddPolicy("UpdateBook", policy => policy.RequireRole("Editor"));
+});
+
 
 builder.Services.AddCors(options =>
 {
@@ -122,7 +130,11 @@ builder.Logging.AddSerilog(logger);
 
 var app = builder.Build();
 
-
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await SeedData.InitializeAsync(services);
+}
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.

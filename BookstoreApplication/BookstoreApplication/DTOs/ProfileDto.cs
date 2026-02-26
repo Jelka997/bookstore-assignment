@@ -1,4 +1,4 @@
-﻿namespace BookstoreApplication.Services
+﻿namespace BookstoreApplication.DTOs
 {
     public class ProfileDto
     {

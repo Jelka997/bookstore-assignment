@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
-using BookstoreApplication.Services;
 
 namespace BookstoreApplication.Settings
 {

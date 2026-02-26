@@ -9,6 +9,7 @@ namespace BookstoreApplication.Services
         Task<bool> DeleteAsync(int id);
         Task<List<BookDto>> GetAllAsync(string order, string orderDirection);
         Task<BookDetailsDto?> GetByIdAsync(int id);
+        Task<Book> GetBookByIdAsync(int id);
         Task<Book> UpdateAsync(int id, Book book);
         Task<List<BookDto>> BookSearchAsync(BookSearchDto bookSearchDto);
         Task<List<BookDto>> GetAllBooksAsync();
