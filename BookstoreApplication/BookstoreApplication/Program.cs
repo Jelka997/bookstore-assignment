@@ -3,6 +3,7 @@ using BookstoreApplication.Models;
 using BookstoreApplication.Repositorys;
 using BookstoreApplication.Services;
 using BookstoreApplication.Settings;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -100,12 +101,24 @@ builder.Services.AddAuthentication(options =>
 
         RoleClaimType = ClaimTypes.Role
     };
-});
+})
+.AddGoogle("Google", options =>
+ {
+     options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+
+     options.ClaimActions.MapJsonKey(ClaimTypes.GivenName, "given_name");
+     options.ClaimActions.MapJsonKey(ClaimTypes.Surname, "family_name");
+
+     options.CallbackPath = "/api/Auth/signin-google";
+ }
+);
+
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("DeleteBook", policy => policy.RequireRole("Editor"));
-    options.AddPolicy("UpdateBook", policy => policy.RequireRole("Editor"));
+   options.AddPolicy("DeleteBook", policy => policy.RequireRole("Editor"));
+   options.AddPolicy("UpdateBook", policy => policy.RequireRole("Editor"));
 });
 
 
@@ -144,6 +157,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
